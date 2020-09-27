@@ -33,9 +33,10 @@ run: WordCount1.jar
 ##
 #HADOOP_V=3.2.1
 STREAM_JAR = /usr/lib/hadoop-mapreduce/hadoop-streaming.jar
-
+# First things we do are remove the total local file from prev run, and remove stream-output dir from HDFS
 stream:
-	-rm -rf stream-output
+	-rm total
+	-hdfs dfs -f -R stream-output
 	time hadoop jar $(STREAM_JAR) \
 	-mapper URLMapper.py \
 	-reducer URLReducer.py \
