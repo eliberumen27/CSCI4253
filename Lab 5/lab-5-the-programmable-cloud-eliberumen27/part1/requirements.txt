@@ -1,0 +1,12 @@
+Requirements to run part 1 of provisioning VM instances in GCP
+
+pip3 install --upgrade google-api-python-client
+pip3 install --upgrade google-api-python-client
+
+To run program:
+
+python3 my_create_instance.py {project_id} {bucket_name}
+
+Optional:
+
+Change the parameters starting at line 201 to adjust zone, name of project, firewall...

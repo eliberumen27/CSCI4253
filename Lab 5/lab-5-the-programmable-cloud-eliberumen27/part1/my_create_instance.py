@@ -188,7 +188,7 @@ if __name__ == '__main__':
         'bucket_name', help='Your Google Cloud Storage bucket name.')
     parser.add_argument(
         '--zone',
-        default='us-west1-b',
+        default='us-west1-a',
         help='Compute Engine zone to deploy to.')
     parser.add_argument(
         '--name', default='demo-instance', help='New instance name.')
@@ -199,7 +199,7 @@ if __name__ == '__main__':
     service = discovery.build('compute', 'v1', credentials=credentials)
 
     # Specifying project parameters for the request to insert firewall rule
-    zone = 'us-west1-b'
+    zone = 'us-west1-a'
     project = 'total-vertex-291803'
     instance = 'demo-instance'
     firewall_body = {
