@@ -198,7 +198,7 @@ if __name__ == '__main__':
     credentials = GoogleCredentials.get_application_default()
     service = discovery.build('compute', 'v1', credentials=credentials)
 
-    # Specifying project parameters for the request to insert firewall rule
+    # Specifying project parameters for the request to insert firewall rule,
     zone = 'us-west1-a'
     project = 'total-vertex-291803'
     instance = 'demo-instance'
