@@ -24,9 +24,11 @@ spec:
         # the hosts of rabbit and redis
         # We are declaring these environment variables of the container before deploying
         env:
+          - name: GET_HOSTS_FROM
+            value: dns
           - name: REDIS_HOST
-            value: "10.235.132.16"
+            value: redis
           - name: RABBITMQ_HOST
-            value: "10.235.132.16"
+            value: rabbitmq
 
 ---

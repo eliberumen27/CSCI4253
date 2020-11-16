@@ -96,8 +96,9 @@ def callback(ch, method, properties, body):
 
     # HASH TO SET OF HASHES OF MATCHING IMAGES
     # The worker should extract the list of faces in the image using face_recognition.face_encodings (see below). Then, for each face in that list, you should add the face and corresponding image to the Redis database and then compare those faces to all other faces in each image the database. For each image containing any matching face, you would add the images (hashes) of each image to the other such that eventually we can determine the set of images that contain matching faces. Once this
+    # Ideally, we could use cardinality of sets here
     redisHashToHashSet = redis.Redis(host=redisHost, db=4) # Key -> Set
-    
+
 
 # Worker pod consuming on queue, using our processsImage callback function
 channel.basic_consume(queue='toWorker', on_message_callback=callback, auto_ack=True)

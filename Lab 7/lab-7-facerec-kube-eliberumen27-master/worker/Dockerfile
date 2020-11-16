@@ -13,4 +13,7 @@ RUN pip3 install pika redis jsonpickle requests
 WORKDIR /srv
 COPY    worker-server.py /srv
 ENV     FLASK_APP=worker-server.py
+# Settings these environment variables when testing the container alone. The deployment will specify the true IPs during deployment
+#ENV     REDIS_HOST=10.203.144.216
+#ENV     RABBITMQ_HOST=10.203.144.216
 CMD [ "python3", "worker-server.py"]
