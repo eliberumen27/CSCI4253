@@ -23,6 +23,9 @@ an image.
 
 For more information, see the README.md under /compute.
 """
+# Summary: Building the request to the Compute API so that it builds the machine we want along with running the startup script won it that we made
+# Later we send(execute) another request, this time to the Firewall API in GCP so that way port 5000 allows ingress traffic from the interner
+# We store the responses after executing the requests just to confirm it did what we wanted
 
 import argparse
 import os
@@ -226,6 +229,8 @@ if __name__ == '__main__':
     #     pprint(response)
     # else:
     #     pprint("5000 is already allowed")
+
+    # Making sure the firewall rule doesn't already exist in this project and then inserting one that allows port 5000 to receive ingress traffic
     list_of_firewalls = service.firewalls().list(project=project)
     firewalls_list = list_of_firewalls.execute()
     firewall_name_list = []
