@@ -48,7 +48,8 @@ channel = connection.channel()
 channel.queue_declare(queue = "toWorker")
 
 # CALLBACK where we process the image data that came in from the rest server
-# This should be found in the body
+# Image data will be found in the body paramater
+# Note: The callback runs everytime the worker reads a message from our Q
 def callback(ch, method, properties, body):
     # commenting the following out to hide the spam and just getting what we want in pieces
     # print(" [x] %r:%r" % (method.routing_key, body), file = sys.stderr)
@@ -56,6 +57,9 @@ def callback(ch, method, properties, body):
     # data1 = URL where image is from or filename, data2 = hash of the image, data3 = actual image data
     data1, data2, data3 = pickle.loads(body)
     print("Image URL or Filename = ", data1, "\nImage Hash", data2)
+
+    # data3 contains our image data
+    imgBytes = io.BytesIO(data3)
 
 
     # Set up redis DBs, one by one based on their purpose
@@ -69,25 +73,31 @@ def callback(ch, method, properties, body):
 
     # HASH TO NAME (db=2), for every hash, we gotta have a value that is a redis set or list holding names/urls
     redisHashToName = redis.Redis(host=redisHost, db=2)    # Key -> Set
-    redisHashToName.set(data2, data1) # Decoding hash and putting it in as the key
+    redisHashToName.set(data2, data1) # putting hash in as the key
     print("Getting URL or Filename based on the hash")
-    print("filename or URL = ", data1)
-    name = redisHashToName.get(data2) # No need to do a pickle loads again since we already unpacked object
-    print("Name/URL for that Hash Value: ", name.decode())
+    name = redisHashToName.get(data2).decode() # Ususlly have to decode when getting from Redis DB
+    print("Filename or URL = ", name)
 
 
 
-    # redisHashToFaceRec = redis.Redis(host=redisHost, db=3) # Key -> Set
-    # redisHashToHashSet = redis.Redis(host=redisHost, db=4) # Key -> Set
+    # HASH TO SET OF FACES RECOGNIZED FROM IMAGE (db=3)
+    redisHashToFaceRec = redis.Redis(host=redisHost, db=3) # Key -> Set
+    # Was going to use Redis set but breaking down python list was easier
+    # Load the uploaded image file as a bytestream with we got already
+    img = face_recognition.load_image_file(imgBytes)
+    # Get face encodings for any faces in the uploaded image and put in a list
+    unknown_face_encodings = face_recognition.face_encodings(img)
+    faces_list = [face for face in unknown_face_encodings] # one liner to give list of found faces to DB 3
+    num_faces = len(faces_list)
+    redisHashToFaceRec.set(data2, pickle.dumps(faces_list)) # On the other end can do pickle.loads(faces_list) to reconstruct
+    print("There are {} faces in that image as follows: ".format(num_faces), redisHashToFaceRec.get(data2))
 
 
-# def processImage(ch, method, properties, body):
-#     request = pickle.loads(body)
-#     filename = request[0]
-#     hash = request[1]
-#     jpg = request[2]
-#     imgBytes = io.BytesIO(jpg)
 
+    # HASH TO SET OF HASHES OF MATCHING IMAGES
+    # The worker should extract the list of faces in the image using face_recognition.face_encodings (see below). Then, for each face in that list, you should add the face and corresponding image to the Redis database and then compare those faces to all other faces in each image the database. For each image containing any matching face, you would add the images (hashes) of each image to the other such that eventually we can determine the set of images that contain matching faces. Once this
+    redisHashToHashSet = redis.Redis(host=redisHost, db=4) # Key -> Set
+    
 
 # Worker pod consuming on queue, using our processsImage callback function
 channel.basic_consume(queue='toWorker', on_message_callback=callback, auto_ack=True)
