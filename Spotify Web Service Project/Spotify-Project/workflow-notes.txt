@@ -1,0 +1,78 @@
+DEPLOYMENT - INITIAL STEPS
+
+For each directory, we are going to make a container(ie: One for Spotify/REST frontend service, one for our mysql db, and one for the rabbitmq)
+
+1. Get the docker containers built and working with a declarative Dockerfile that will configure the image and run
+the necessary commands, then create an image(docker build --tag <name:version> <directory>)
+
+2. Test the container image while it's still local(docker run)
+
+3. If it's working, send it to my Docker Hub Registry(docker push <name>)
+
+4. Once all 3 containers are working when run locally, they are ready to ship to my Registry and to be used in K8S deployments
+
+
+
+DEPLOYMENT NEXT STEPS
+
+Get multiple containers running and running in a Kubernetes deployment(similar to lab 7 where every pod has just one container, and the pods communicate)
+
+1. Make sure that all pods are communicating and that the deployment and service YAMLs are correctly configured to network
+with each other(pay close attention to the environment variables defined in our Lab 7 and look into how Kubernetes handles DNS for this part to work)
+
+2. Make sure each pod's deployment script is specifying the correct image from my Docker Hub Registry
+
+Wrapping up the cloud deployment
+
+1. Get service working for the spotify-rest frontend
+
+2. Get an ingress working so that my application is accessible via the internet
+
+
+
+
+SPOTIFY-REST INITIAL STEPS
+
+1. Get it to work with a locally downloaded .wav file that has me making a sample query. Convert it to text via the Google API.
+
+2. Use the resulting text to hit the correct Spotify API endpoint to make a query for some data about a certain song or artist
+
+3. Return the best 3-5 relevant results from this in JSON format like always
+
+4. Once we get our response back from the Spotify API, save the response(or user query) to our mysql database(sent via rabbitmq)
+
+Notes: The use of the Google Voice API will be so simple it really won't need it's own containerized microservice.
+
+- Also should have 2 or 3 routes that handle different sorts of user requests.
+
+ie:
+
+@app.route(/spotifind/)
+def hello():
+# Simple hello for default route to pass automated Kubernetes service health checks
+
+@app.route(/spotifind/voice)
+def get_info(.wav-file-data):
+
+# Get back some relevant data from the Spotify API based on user voice input, send it back as a response to the user along with
+a unique id so they can query again later(but this time data comes from our db)
+# and store the results in the database with a unique id as the key for the database entry
+
+@app.route(/spotifind/<id>)
+def search_id(id):
+
+# Access previous results currently being stored in our mysql db via a unique ID that will likely be the primary key for database entries
+
+
+
+Goal: eventually we would be able to do analytics on all of the searches done on our platform since our database is storing all queries and their results
+in the following form: [ID] [QUERY AS TEXT] [RESULTS]
+
+MYSQL DB
+
+1. Get it to listen on our rabbitmq exchange and queue(similar to "toWorker") so that it can save the user voice queries as text or the results(whichever I decide is best)
+
+2. Also listens for requests to send back pre-existing query data/results ??? or does the search_id() method just query the db for us
+
+Notes: In a real world environment this database would need to scale easily since it would start holding so much data, it's best that it is its own service
+since we could easily have kubernetes scale it for us using more pods just for the DB and not interrupt our front-end operation.
