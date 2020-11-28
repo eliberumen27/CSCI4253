@@ -1,0 +1,1 @@
+sudo pip3 install --upgrade pika redis jsonpickle requests flask SpeechRecognition

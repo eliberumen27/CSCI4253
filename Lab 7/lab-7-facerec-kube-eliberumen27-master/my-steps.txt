@@ -3,7 +3,7 @@ Steps:
 1.)
 
 # Installing the necessary packages locally to my machine for the rest-server.py
-sudo pip3 install --upgrade pika redis jsonpickle requests flask
+sudo pip3 install --upgrade pika redis jsonpickle requests flask SpeechRecognition
 
 2.) Built and tested rest-server.py to handle the 3 specified routes
 
