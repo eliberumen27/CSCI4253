@@ -27,5 +27,9 @@ spec:
             value: rabbitmq
           - name: MYSQL_HOST
             value: mysql
+          - name: SPOTIFY_CLIENT_ID
+            value: "848e3bdfd0a549158229482146ada46f"
+          - name: SPOTIFY_CLIENT_SECRET
+            value: "67ae28d9bb184d7bac670f9a080b536d"
         ports:
         - containerPort: 5000

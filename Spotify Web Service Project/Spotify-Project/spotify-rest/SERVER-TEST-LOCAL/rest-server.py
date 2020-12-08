@@ -80,20 +80,36 @@ def voice_search(filename):
 
         results = sp.search(q=sentence, limit=10, type='track')
         for idx, track in enumerate(results['tracks']['items']):
+            # print for server debugging
             print(idx, track['name'], track['artists'][0]['name'], track['album']['name'], track['external_urls']['spotify'])
+            # send back top 10 results to client: NAME | ARTIST NAME | ALBUM NAME | SPOTIFY TRACK URL
             response[idx] = [track['name'], track['artists'][0]['name'], track['album']['name'], track['external_urls']['spotify']] # Returns the track object but we can access certain values from the dict
 
         ### SPOTIFY API CALL, INCLUDING LOADING THE QUERY RESPONSE DATA INTO OUR MYSQL DB TABLE(S)
-        # THIS WORKS!
-        # mydb = mysql.connector.connect(
-        # host="mysql",
-        # user="root",
-        # password="123"
-        # )
-        # print(mydb)
-        #
-        #
-        ### LOAD THE RESPONSE FIELDS INTO SEPARATE COLUMNS OF MY DB
+
+        # Make connection
+        mydb = mysql.connector.connect(
+        host="mysql",
+        user="root",
+        password="123"
+        )
+
+        # Define Cursor to execute stuff and fetch results
+        mycursor = mydb.cursor()
+        # Until we implement a persistent volume, we are creating a new database everytime we run this function
+        mycursor.execute("CREATE DATABASE IF NOT EXISTS spotifydb")
+        mycursor.execute("USE spotifydb")
+        mycursor.execute("CREATE TABLE IF NOT EXISTS tracks (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), artist VARCHAR(255), album_name VARCHAR(255), url VARCHAR(255))")
+
+        # Insert the top result of this particular set of top 10 queries
+        sql = "INSERT INTO tracks (name, artist, album_name, url) VALUES (%s, %s, %s, %s)" # preparing this to pass in the strings
+        val = (reponse[0][0], response[0][1], reponse[0][2], response[0][3]) # access corresponding values in order from list(name, artist, album name, url)
+        mycursor.execute(sql, val)
+
+        mydb.commit()
+        mycursor.fetchall()
+
+        ### WE LOAD THE RESPONSE FIELDS INTO SEPARATE COLUMNS OF MY DB
 
         ### STORING ANY AND ALL IMAGES IN OUR STORAGE BUCKET IN GCP $$$
         # TODO:

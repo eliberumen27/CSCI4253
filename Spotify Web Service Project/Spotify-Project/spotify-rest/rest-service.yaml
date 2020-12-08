@@ -14,3 +14,4 @@ spec:
       targetPort: 5000
   selector:
     app: rest-frontend
+# This should allow us to initially talk to our cluster from localhost but on port 80
