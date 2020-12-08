@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: rest
-        image: eliberumen27/rest:v1
+        image: eliberumen27/spotify-rest:v1 # specify the correct front-end image that I have in Hub
         env:
           - name: GET_HOSTS_FROM
             value: dns
@@ -25,5 +25,7 @@ spec:
             value: redis
           - name: RABBITMQ_HOST
             value: rabbitmq
+          - name: MYSQL_HOST
+            value: mysql
         ports:
         - containerPort: 5000

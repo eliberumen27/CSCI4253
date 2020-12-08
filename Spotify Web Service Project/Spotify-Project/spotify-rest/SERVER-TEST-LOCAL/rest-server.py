@@ -84,7 +84,7 @@ def voice_search(filename):
             response[idx] = [track['name'], track['artists'][0]['name'], track['album']['name'], track['external_urls']['spotify']] # Returns the track object but we can access certain values from the dict
 
         ### SPOTIFY API CALL, INCLUDING LOADING THE QUERY RESPONSE DATA INTO OUR MYSQL DB TABLE(S)
-        #
+        # THIS WORKS!
         # mydb = mysql.connector.connect(
         # host="mysql",
         # user="root",
