@@ -12,6 +12,9 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 import mysql.connector
 
+# Don't forget to set the env var GOOGLE_APPLICATION_CREDENTIALS with your own service account JSON
+from google.cloud import storage
+
 # We'll be using the python SpeeechRecognition module
 # which acts as a wrapper for many well known
 # speech recognition APIs(we're using google cloud speech-to-text)
@@ -113,9 +116,13 @@ def voice_search(filename):
         ### WE LOAD THE RESPONSE FIELDS INTO SEPARATE COLUMNS OF MY DB
 
         ### STORING ANY AND ALL IMAGES IN OUR STORAGE BUCKET IN GCP $$$
-        # TODO:
+        # Storing the query audio file in the storage bucket "spotify-voice-search" of our GCP Project
         #
-        #
+        storage_client = storage.Client()
+        bucket = storage_client.get_bucket("spotify-voice-search")
+        gcp_filename = "Query-{}".format(filename)
+        blob = bucket.blob(gcp_filename)
+        blob.upload_from_filename(filename)
         #
         ### MAKE SURE THAT IT PROPERLY STORES IMAGES IN BUCKET
 
