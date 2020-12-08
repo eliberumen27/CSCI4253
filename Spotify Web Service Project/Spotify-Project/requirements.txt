@@ -1,1 +1,7 @@
-sudo pip3 install --upgrade pika redis jsonpickle requests flask SpeechRecognition
+sudo pip3 install --upgrade pika redis jsonpickle requests flask SpeechRecognition 
+
+Set environment variables for mySQL, RabbitMQ, and Spotify APIs
+export MYSQL_HOST=<my_machine_ip>
+export RABBITMQ_HOST=<my_machine_ip>
+export SPOTIFY_CLIENT_ID=<my_id>
+export SPOTIFY_CLIENT_SECRET=<my_secret>

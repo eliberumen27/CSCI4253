@@ -27,6 +27,7 @@ spec:
             value: "3306"
           - name: MYSQL_ROOT_PASSWORD
             value: "123"
+        # This is NOT a secure way to do a db password, but just for this example we will
         # We're running these commands here as opposed to in the Dockerfile
         # for the default mysql container, that way we can make changes
         # by simply restarting the pod and not building a new image

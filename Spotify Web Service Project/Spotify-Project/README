@@ -1,0 +1,14 @@
+Instructions for running in K8S:
+
+- Set Spotify API Client key and secret and environment variables in the REST Pod
+
+- Apply the following YAMLs:
+    rest-deployment
+    rest-services
+
+    mysql-deployment
+    mysql-service
+
+Try the rest-client.py testing script on the rest server
+
+ie: python3 rest-client.py localhost voice <name>.wav <number of runs>
