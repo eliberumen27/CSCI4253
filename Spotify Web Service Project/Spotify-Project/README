@@ -2,13 +2,26 @@ Instructions for running in K8S:
 
 - Set Spotify API Client key and secret and environment variables in the REST Pod
 
-- Apply the following YAMLs:
-    rest-deployment
-    rest-services
+## Voice-based Music Search ##
 
-    mysql-deployment
-    mysql-service
+Dependencies:
 
-Try the rest-client.py testing script on the rest server
+- pip3 install pika redis jsonpickle requests flask spotipy SpeechRecognition mysql-connector-python google-cloud-storage
 
-ie: python3 rest-client.py localhost voice <name>.wav <number of runs>
+Set environment variables for mySQL, RabbitMQ, and Spotify APIs:
+
+- export MYSQL_HOST="mysql"
+- export RABBITMQ_HOST="rabbitmq"
+
+- export SPOTIFY_CLIENT_ID="<my_id>"
+- export GOOGLE_APPLICATION_CREDENTIALS="<Service Account JSON PATH>"
+
+1.) Apply the Kubernetes deployment .YAMLs
+2.) Apply the Kubernetes service .YAMLs
+3.) Run the rest-client against the cluster:
+
+    If running locally as a "single-node cluster":
+    - python3 rest-client.py localhost:5000 <voice/find> <file path/query word> <# of runs>
+
+    Otherwise:
+    - - python3 rest-client.py <ingress ip> <voice/find> <file path/query word> <# of runs>

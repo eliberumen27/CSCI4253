@@ -1,7 +1,23 @@
-sudo pip3 install --upgrade pika redis jsonpickle requests flask SpeechRecognition 
+Voice-based Music Search
 
-Set environment variables for mySQL, RabbitMQ, and Spotify APIs
-export MYSQL_HOST=<my_machine_ip>
-export RABBITMQ_HOST=<my_machine_ip>
-export SPOTIFY_CLIENT_ID=<my_id>
-export SPOTIFY_CLIENT_SECRET=<my_secret>
+Dependencies:
+
+- pip3 install pika redis jsonpickle requests flask spotipy SpeechRecognition mysql-connector-python google-cloud-storage
+
+Set environment variables for mySQL, RabbitMQ, and Spotify APIs:
+
+- export MYSQL_HOST="mysql"
+- export RABBITMQ_HOST="rabbitmq"
+
+- export SPOTIFY_CLIENT_ID="<my_id>"
+- export GOOGLE_APPLICATION_CREDENTIALS="<Service Account JSON PATH>"
+
+1.) Apply the Kubernetes deployment .YAMLs
+2.) Apply the Kubernetes service .YAMLs
+3.) Run the rest-client against the cluster:
+
+    If running locally as a "single-node cluster":
+    - python3 rest-client.py localhost:5000 <voice/find> <file path/query word> <# of runs>
+
+    Otherwise:
+    - - python3 rest-client.py <ingress ip> <voice/find> <file path/query word> <# of runs>
