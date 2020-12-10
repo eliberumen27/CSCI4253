@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox5
+  labels:
+    app: busybox
+    purpose: demonstrate-command
+spec:
+  #
+  # We're going to create two containers in a single pod.
+  # The one container writes to /tmp and the other attempt
+  # to read from it.
+  #
+  # However, each container is isolated and has their own
+  # file system (including /tmp). Thus, the second container
+  # doesn't see the logs from the first.
+  #
+  # This example demonstrates the problem, the next the solution.
+  #
+  containers:
+  - name: busybox
+    image: busybox
+    args:
+      - /bin/sh
+      - -c
+      - |
+        while true;
+        do
+          echo "$(date)\n" >> /tmp/example.log;
+          sleep 1;
+        done
+  - name: muhlogs
+    image: busybox
+    args: [ /bin/sh, -c, "tail -f /tmp/example.log" ]
+  restartPolicy: OnFailure

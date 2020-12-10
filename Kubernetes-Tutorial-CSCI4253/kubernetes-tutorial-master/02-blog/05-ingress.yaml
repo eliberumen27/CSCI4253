@@ -1,0 +1,18 @@
+#
+# See https://kubernetes.io/docs/concepts/services-networking/ingress/
+#
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: minimal-ingress
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+  - http:
+      paths:
+      - path: / # This is sort of like a route, and will connect to our flask-svc on that port 9999
+        pathType: Prefix
+        backend:
+          serviceName: flask-svc
+          servicePort: 9999

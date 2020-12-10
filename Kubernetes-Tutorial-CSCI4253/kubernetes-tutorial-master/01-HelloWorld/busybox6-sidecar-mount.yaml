@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox6
+  labels:
+    app: busybox
+    purpose: demonstrate-command
+spec:
+  #
+  # In this example, we are going to create an "empty" volume
+  # called varlog and then mount it on the two containers in the
+  # pod. This will create a "shared" file area for the two, allowing
+  # the log file to be writte by one and consumed by the other
+  #
+  volumes:
+    - name: varlog
+      emptyDir: {} # The empty directory just creates an empty dir volume that is later attached
+  restartPolicy: OnFailure
+  containers:
+  - name: busybox
+    image: busybox
+    args:
+      - /bin/sh
+      - -c
+      - |
+        while true;
+        do
+          echo "$(date)\n" >> /var/log/example.log;
+          sleep 1;
+        done
+    volumeMounts:
+      - name: varlog
+        mountPath: /var/log
+  - name: muhlogs
+    image: busybox
+    args: [ /bin/sh, -c, "tail -f /var/log/example.log" ]
+    volumeMounts:
+      - name: varlog
+        mountPath: /var/log
+
+# Notes: We are mounting a volume(that we declare first) on the same part of the filesystem in each container, so that the logs actually get sent there.
+# Remember that these volumes are ephemeral, when the pods go away, the volume goes away, unless we set up a persistent volume where the epheremal one is
